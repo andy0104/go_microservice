@@ -1,0 +1,38 @@
+name: User Microservice Audit
+on:
+  push:
+    branches: ["development"]
+    paths: ["user_service/**"]
+  pull_request:
+    branches: ["development"]
+    paths: ["user_service/**"]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Code Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Golang
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.23.4'
+
+    - name: Verify Dependencies
+      run: go mod verify
+
+    - name: Build User Service
+      run: go build -v ./...
+
+    - name: Go Vet
+      run: go vet -v ./...
+
+    - name: Install Staticcheck
+      run: go install honnef.co/go/tools/cmd/staticcheck@latest
+
+    - name: Run Static Check
+      run: staticcheck ./...
+
+    - name: Run Test
+      run: go test -v ./tests/...
