@@ -1,8 +1,5 @@
 name: User Microservice Audit
 on:
-  push:
-    branches: ["development"]
-    paths: ["user_service/**"]
   pull_request:
     branches: ["development"]
     paths: ["user_service/**"]
