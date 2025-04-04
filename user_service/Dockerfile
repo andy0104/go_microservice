@@ -1,8 +1,9 @@
 # Stage 1: This is the build stage
-FROM golang:1.23.4 as builder
+FROM golang:1.23.4 AS builder
 # Set the working directory inside the container
 WORKDIR /app
 # Copy go.mod and go.sum files and install dependencies
+RUN ls -l
 COPY go.mod ./ 
 COPY go.sum ./
 RUN go mod download
