@@ -6,14 +6,15 @@ on:
 
 jobs:
   build:
+    environment: development
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0.10.0
+      - name: Set up Google Cloud Cli
+        uses: google-github-actions/setup-gcloud@v0
         with:
           service_account_key: ${{ secrets.GCP_APPLICATION_CREDENTIALS }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
