@@ -49,48 +49,6 @@ func TestUserSignUpApi(t *testing.T) {
 	// setup app routes
 	config.InitServer(app, hndlrs)
 
-	t.Run("test signup api call email exist error", func(t *testing.T) {
-		mock.ExpectQuery(`SELECT user_id, first_name, last_name, email_id, user_password FROM "Users" WHERE email_id = \$1`).
-			WithArgs("a@c.com").
-			WillReturnRows(sqlxmock.NewRows([]string{"user_id", "first_name", "last_name", "email_id", "user_password"}).
-				AddRow(1, "Aninda", "Kar", "a@c.com", "1234567890"))
-
-		// create signup request payload
-		signupRequest := dto.UserSignupRequest{
-			FirstName: "Aninda",
-			LastName:  "Kar",
-			Email:     "a@c.com",
-			Password:  "1234567890",
-		}
-		jsonReq, _ := json.Marshal(signupRequest)
-		bodyReq := bytes.NewBuffer(jsonReq)
-		req, err := http.NewRequest("POST", "/api/v1/user/signup", bodyReq)
-		if err != nil {
-			log.Panic(err)
-		}
-		req.Header.Set("Content-Type", "application/json")
-
-		res, err := app.Test(req)
-		if err != nil {
-			t.Fatalf("Could not create signup request: %v", err)
-		}
-
-		// parse the response body
-		bodyBytes, err := io.ReadAll(res.Body)
-		if err != nil {
-			t.Fatalf("Could not read the response body: %v", err)
-		}
-		var response map[string]map[string]any
-		if err := json.Unmarshal(bodyBytes, &response); err != nil {
-			t.Fatalf("Could not parse the response body: %v", err)
-		}
-
-		assert.Equal(t, res.StatusCode, fiber.StatusConflict)
-		assert.NotNil(t, response["error"])
-		assert.Equal(t, response["error"]["message"], "email is already in use")
-		assert.Nil(t, response["data"])
-	})
-
 	t.Run("test signup api call first name validation error", func(t *testing.T) {
 		// create signup request payload
 		signupRequest := dto.UserSignupRequest{
@@ -274,6 +232,48 @@ func TestUserSignUpApi(t *testing.T) {
 		assert.Nil(t, response["data"])
 		assert.NotNil(t, response["error"])
 		assert.Equal(t, response["error"]["message"], "validation error")
+	})
+
+	t.Run("test signup api call email exist error", func(t *testing.T) {
+		mock.ExpectQuery(`SELECT user_id, first_name, last_name, email_id, user_password FROM "Users" WHERE email_id = \$1`).
+			WithArgs("a@c.com").
+			WillReturnRows(sqlxmock.NewRows([]string{"user_id", "first_name", "last_name", "email_id", "user_password"}).
+				AddRow(1, "Aninda", "Kar", "a@c.com", "1234567890"))
+
+		// create signup request payload
+		signupRequest := dto.UserSignupRequest{
+			FirstName: "Aninda",
+			LastName:  "Kar",
+			Email:     "a@c.com",
+			Password:  "1234567890",
+		}
+		jsonReq, _ := json.Marshal(signupRequest)
+		bodyReq := bytes.NewBuffer(jsonReq)
+		req, err := http.NewRequest("POST", "/api/v1/user/signup", bodyReq)
+		if err != nil {
+			log.Panic(err)
+		}
+		req.Header.Set("Content-Type", "application/json")
+
+		res, err := app.Test(req)
+		if err != nil {
+			t.Fatalf("Could not create signup request: %v", err)
+		}
+
+		// parse the response body
+		bodyBytes, err := io.ReadAll(res.Body)
+		if err != nil {
+			t.Fatalf("Could not read the response body: %v", err)
+		}
+		var response map[string]map[string]any
+		if err := json.Unmarshal(bodyBytes, &response); err != nil {
+			t.Fatalf("Could not parse the response body: %v", err)
+		}
+
+		assert.Equal(t, res.StatusCode, fiber.StatusConflict)
+		assert.NotNil(t, response["error"])
+		assert.Equal(t, response["error"]["message"], "email is already in use")
+		assert.Nil(t, response["data"])
 	})
 
 	t.Run("test signup api call success", func(t *testing.T) {
