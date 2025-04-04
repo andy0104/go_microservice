@@ -50,7 +50,7 @@ func TestUserSignUpApi(t *testing.T) {
 	config.InitServer(app, hndlrs)
 
 	t.Run("test signup api call first name validation error", func(t *testing.T) {
-		// create signup request payloads
+		// create signup request payload
 		signupRequest := dto.UserSignupRequest{
 			FirstName: "",
 			LastName:  "Kar",
