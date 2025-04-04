@@ -3,10 +3,11 @@ FROM golang:1.23.4 as builder
 # Set the working directory inside the container
 WORKDIR /app
 # Copy go.mod and go.sum files and install dependencies
-COPY go.mod go.sum ./
+COPY go.mod ./ 
+COPY go.sum ./
 RUN go mod download
 # Copy the source code
-COPY . .
+COPY ../ .
 RUN go build -o user_service_api .
 
 # Stage 2: Runtime stage
