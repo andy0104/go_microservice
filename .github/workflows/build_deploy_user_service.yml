@@ -29,6 +29,6 @@ jobs:
           cd user_service
           TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
           IMAGE_NAME=asia-south2-docker.pkg.dev/$GOOGLE_PROJECT/gomicroservice-user-service/user-service
-          docker build -t $IMAGE_NAME:$TIMESTAMP ./infra/
+          docker build -t $IMAGE_NAME:$TIMESTAMP .
           docker tag $IMAGE_NAME:$TIMESTAMP $IMAGE_NAME:latest          
           docker push IMAGE_NAME:latest
