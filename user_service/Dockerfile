@@ -7,7 +7,7 @@ COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
 # Copy the source code
-COPY ../ .
+COPY . .
 RUN go build -o user_service_api .
 
 # Stage 2: Runtime stage
