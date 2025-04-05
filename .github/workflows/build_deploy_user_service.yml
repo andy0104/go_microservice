@@ -12,13 +12,21 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Google Cloud Cli
-        uses: google-github-actions/setup-gcloud@v2
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
         with:
-          service_account_key: ${{ secrets.GCP_APPLICATION_CREDENTIALS }}
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          export_default_credentials: true
+          credentials_json: ${{ secrets.GCP_APPLICATION_CREDENTIALS }}
 
+      - name: Set up Google Cloud Cli
+        uses: 'google-github-actions/setup-gcloud@v2'
+        # with:
+        #  service_account_key: ${{ secrets.GCP_APPLICATION_CREDENTIALS }}
+        #  project_id: ${{ secrets.GCP_PROJECT_ID }}
+        #  export_default_credentials: true
+      
+      - name: 'Use Google Cloud Cli'
+        run: 'gcloud info'
+      
       - name: Authenticate Docker
         run: gcloud auth configure-docker asia-south2-docker.pkg.dev
 
