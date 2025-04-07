@@ -9,13 +9,15 @@ COPY go.sum ./
 RUN go mod download
 # Copy the source code
 COPY . .
-RUN go build -o user_service_api .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o user_service_api .
 
 # Stage 2: Runtime stage
 FROM gcr.io/distroless/base-debian11
 # Set the working directory inside the container
 WORKDIR /app
 # Copy the binary from the builder stage
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs
 COPY --from=builder /app/user_service_api .
 # Command to run the application
+EXPOSE 8011
 CMD ["./user_service_api"]
