@@ -9,7 +9,7 @@ COPY go.sum ./
 RUN go mod download
 # Copy the source code
 COPY . .
-RUN go build -o user_service_api .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o user_service_api .
 
 # Stage 2: Runtime stage
 FROM gcr.io/distroless/base-debian11
