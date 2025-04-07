@@ -33,7 +33,7 @@ func InitDb() (*sqlx.DB, error) {
 	log.Println("Database connected!")
 
 	// apply the migrations
-	runMigrations(db.DB)
+	// runMigrations(db.DB)
 
 	return db, nil
 }
