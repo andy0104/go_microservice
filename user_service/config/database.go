@@ -52,8 +52,6 @@ func runMigrations(db *sql.DB) {
 		"gomicroservicedb",
 		driver,
 	)
-	defer m.Close()
-
 	if err != nil {
 		log.Fatalf("Failed to initialize the migrations: %v", err)
 	}
@@ -61,6 +59,11 @@ func runMigrations(db *sql.DB) {
 	// apply the migrations
 	if err = m.Up(); err != nil && err != migrate.ErrNoChange {
 		log.Fatalf("Failed to apply the migrations: %v", err)
+	}
+
+	srcErr, dbErr := m.Close()
+	if srcErr != nil || dbErr != nil {
+		log.Fatalf("Migration error: srcErr: %s \ndbErr: %s", srcErr, dbErr)
 	}
 
 	log.Println("Migrations are updated!")
