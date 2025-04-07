@@ -33,7 +33,7 @@ func InitDb() (*sqlx.DB, error) {
 	log.Println("Database connected!")
 
 	// apply the migrations
-	// runMigrations(db.DB)
+	runMigrations(db.DB)
 
 	return db, nil
 }
@@ -45,9 +45,10 @@ func runMigrations(db *sql.DB) {
 		log.Fatalf("Failed to create migration driver: %v", err)
 	}
 
+	migrationsDir := "./migrations"
 	// initialize the migrations
 	m, err := migrate.NewWithDatabaseInstance(
-		"file://migrations", // directory for the migrations
+		"file://"+migrationsDir, // directory for the migrations
 		"gomicroservicedb",
 		driver,
 	)
@@ -58,6 +59,11 @@ func runMigrations(db *sql.DB) {
 	// apply the migrations
 	if err = m.Up(); err != nil && err != migrate.ErrNoChange {
 		log.Fatalf("Failed to apply the migrations: %v", err)
+	}
+
+	srcErr, dbErr := m.Close()
+	if srcErr != nil || dbErr != nil {
+		log.Fatalf("Migration error: srcErr: %s \ndbErr: %s", srcErr, dbErr)
 	}
 
 	log.Println("Migrations are updated!")
