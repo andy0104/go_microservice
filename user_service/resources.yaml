@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-go-microservice
+  labels:
+    app: user-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-microservice
+  template:
+    metadata:
+      labels:
+        app: user-microservice
+    spec:
+      containers:
+        - name: user-microservice
+          image: asia-south2-docker.pkg.dev/skilled-snow-455608-e8/gomicroservice-user-service/user-service:latest
+          ports:
+            - containerPort: 8011
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "256m"
+            requests:
+              memory: "128Mi"
+              cpu: "128m"
+          env:
+            - name: DATABASE_URI
+              valueFrom:
+                secretKeyRef:
+                  name: go-microservice-secret
+                  key: DATABASE_URI
+            - name: SERVER_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: go-microservice-secret
+                  key: SERVER_PORT
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-go-microservice
+  labels:
+    app: user-microservice
+spec:
+  type: ClusterIP
+  selector:
+    app: user-microservice
+  ports:
+    - protocol: TCP
+      port: 8011
+      targetPort: 8011
+
+
+            
