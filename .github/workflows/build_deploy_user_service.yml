@@ -46,3 +46,10 @@ jobs:
           docker build -t $IMAGE_NAME:$TIMESTAMP .
           docker tag $IMAGE_NAME:$TIMESTAMP $IMAGE_NAME:latest          
           docker push $IMAGE_NAME:latest
+
+      - name: 'Deploy To GKE'
+        run: |
+          cd user_service
+          kubectl apply -f resources.yaml
+          kubectl get services -o wide
+          
